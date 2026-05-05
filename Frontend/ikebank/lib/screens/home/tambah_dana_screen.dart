@@ -74,11 +74,12 @@ class _TambahDanaScreenState extends State<TambahDanaScreen> {
         ),
       ),
       //error, tambahin singlechildscrollview
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
             Container(
               decoration: BoxDecoration(
                 color: Colors.white,
@@ -213,8 +214,9 @@ class _TambahDanaScreenState extends State<TambahDanaScreen> {
           ],
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 
   Widget _buildTopUpMethod({required IconData icon, required String title}) {
     final TextStyle alumniSansBold = const TextStyle(
