@@ -28,6 +28,9 @@ class FaceRecogScreen extends StatefulWidget {
   final String? newPassword;
   final String? newPasswordConfirmation;
 
+  /// Override for testing – jika null, menggunakan availableCameras() asli.
+  final Future<List<CameraDescription>> Function()? availableCamerasOverride;
+
   const FaceRecogScreen({
     super.key,
     this.isFromRegister = false,
@@ -41,6 +44,7 @@ class FaceRecogScreen extends StatefulWidget {
     this.newPassword,
     this.newPasswordConfirmation,
     this.intent,
+    this.availableCamerasOverride,
   });
 
   @override
@@ -89,7 +93,9 @@ class _FaceRecogScreenState extends State<FaceRecogScreen> {
 
   Future<void> _initCamera() async {
     try {
-      final cameras = await availableCameras();
+      final cameras = widget.availableCamerasOverride != null
+          ? await widget.availableCamerasOverride!()
+          : await availableCameras();
       if (cameras.isEmpty) {
         if (!mounted) return;
         setState(() => _errorMessage = 'Kamera tidak tersedia');

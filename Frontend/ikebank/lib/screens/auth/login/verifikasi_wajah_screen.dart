@@ -11,6 +11,9 @@ class VerifikasiWajahScreen extends StatelessWidget {
   final bool isLupaPin;
   final Map<String, dynamic>? qrisData;
 
+  /// Override for testing – jika null, navigasi ke FaceRecogScreen seperti biasa.
+  final VoidCallback? onOpenFaceRecog;
+
   const VerifikasiWajahScreen({
     super.key,
     this.isFromRegister = false,
@@ -19,6 +22,7 @@ class VerifikasiWajahScreen extends StatelessWidget {
     this.flowData,
     this.isLupaPin = false,
     this.qrisData,
+    this.onOpenFaceRecog,
   });
 
   @override
@@ -147,19 +151,23 @@ class VerifikasiWajahScreen extends StatelessWidget {
                               ),
                             ),
                             onPressed: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) => FaceRecogScreen(
-                                    isFromRegister: isFromRegister,
-                                    email: email,
-                                    reference: reference,
-                                    flowData: flowData,
-                                    isLupaPin: isLupaPin,
-                                    qrisData: qrisData,
+                              if (onOpenFaceRecog != null) {
+                                onOpenFaceRecog!();
+                              } else {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => FaceRecogScreen(
+                                      isFromRegister: isFromRegister,
+                                      email: email,
+                                      reference: reference,
+                                      flowData: flowData,
+                                      isLupaPin: isLupaPin,
+                                      qrisData: qrisData,
+                                    ),
                                   ),
-                                ),
-                              );
+                                );
+                              }
                             },
                             child: Text(
                               "Ambil selfie",
