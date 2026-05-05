@@ -2,7 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:ikebank/api/auth.dart';
 import 'dart:io';
 import '../../../core/colors.dart';
-import 'isi_data_screen.dart'; // Nanti kita buat file ini
+import 'isi_data_screen.dart';
+
+typedef UploadKtpFn =
+    Future<Map<String, dynamic>> Function(File file, String reference);
 
 class ReviewFotoKtpScreen extends StatelessWidget {
   final File? imageFile;
@@ -10,12 +13,16 @@ class ReviewFotoKtpScreen extends StatelessWidget {
   final String email;
   final String? reference;
 
+  /// Override for testing
+  final UploadKtpFn? uploadKtpOverride;
+
   const ReviewFotoKtpScreen({
     super.key,
     this.imageFile,
     required this.phone,
     required this.email,
     this.reference,
+    this.uploadKtpOverride,
   });
 
   @override
@@ -187,10 +194,18 @@ class ReviewFotoKtpScreen extends StatelessWidget {
                     }
 
                     try {
-                      final result = await AuthService.uploadKTP(
-                        imageFile: imageFile!,
-                        reference: reference!,
-                      );
+                      final Map<String, dynamic> result;
+                      if (uploadKtpOverride != null) {
+                        result = await uploadKtpOverride!(
+                          imageFile!,
+                          reference!,
+                        );
+                      } else {
+                        result = await AuthService.uploadKTP(
+                          imageFile: imageFile!,
+                          reference: reference!,
+                        );
+                      }
 
                       if (!context.mounted) {
                         return;

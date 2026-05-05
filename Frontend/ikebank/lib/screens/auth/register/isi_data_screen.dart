@@ -12,6 +12,9 @@ class IsiDataScreen extends StatefulWidget {
   final Map<String, dynamic> prefillIdentity;
   final String? reference;
 
+  /// Override for testing – jika null, navigasi ke VerifikasiWajahScreen seperti biasa.
+  final void Function(RegisterFlowData flowData)? onContinue;
+
   const IsiDataScreen({
     super.key,
     required this.phone,
@@ -19,6 +22,7 @@ class IsiDataScreen extends StatefulWidget {
     this.ktpImageFile,
     this.prefillIdentity = const <String, dynamic>{},
     this.reference,
+    this.onContinue,
   });
 
   @override
@@ -281,41 +285,47 @@ class _IsiDataScreenState extends State<IsiDataScreen> {
                                   return;
                                 }
 
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) => VerifikasiWajahScreen(
-                                      isFromRegister: true,
-                                      reference: widget.reference,
-                                      flowData: RegisterFlowData(
-                                        phoneNumber: widget.phone,
-                                        email: widget.email,
-                                        otpReference: widget.reference ?? '',
-                                        ktpFile: widget.ktpImageFile,
-                                        name: _namaController.text.trim(),
-                                        nik: _nikController.text.trim(),
-                                        bornPlace:
-                                            (widget.prefillIdentity['born_place']
-                                                    ?.toString()
-                                                    .trim()
-                                                    .isNotEmpty ??
-                                                false)
-                                            ? widget
-                                                  .prefillIdentity['born_place']
-                                                  .toString()
-                                                  .trim()
-                                            : '-',
-                                        bornDate: _toApiDate(
-                                          _ttlController.text.trim(),
-                                        ),
-                                        gender: _toApiGender(_jenisKelamin),
-                                        address: _alamatController.text.trim(),
-                                        religion: _agama!,
-                                        motherName: _ibuController.text.trim(),
+                                final flowData = RegisterFlowData(
+                                  phoneNumber: widget.phone,
+                                  email: widget.email,
+                                  otpReference: widget.reference ?? '',
+                                  ktpFile: widget.ktpImageFile,
+                                  name: _namaController.text.trim(),
+                                  nik: _nikController.text.trim(),
+                                  bornPlace:
+                                      (widget.prefillIdentity['born_place']
+                                              ?.toString()
+                                              .trim()
+                                              .isNotEmpty ??
+                                          false)
+                                      ? widget
+                                            .prefillIdentity['born_place']
+                                            .toString()
+                                            .trim()
+                                      : '-',
+                                  bornDate: _toApiDate(
+                                    _ttlController.text.trim(),
+                                  ),
+                                  gender: _toApiGender(_jenisKelamin),
+                                  address: _alamatController.text.trim(),
+                                  religion: _agama!,
+                                  motherName: _ibuController.text.trim(),
+                                );
+
+                                if (widget.onContinue != null) {
+                                  widget.onContinue!(flowData);
+                                } else {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (context) => VerifikasiWajahScreen(
+                                        isFromRegister: true,
+                                        reference: widget.reference,
+                                        flowData: flowData,
                                       ),
                                     ),
-                                  ),
-                                );
+                                  );
+                                }
                               }
                             },
                             child: Text(
